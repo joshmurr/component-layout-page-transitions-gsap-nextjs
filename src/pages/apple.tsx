@@ -1,11 +1,14 @@
 import { Page } from "@/components/Page";
 import { Thing } from "@/components/Thing";
-import { useTransitionState } from "@/context/TransitionContext";
+import {
+  type MorphItems,
+  useTransitionState,
+} from "@/context/TransitionContext";
 import { useLayoutEffect, useRef } from "react";
 
 export default function Apple() {
   const pageRef = useRef(null);
-  const morphRefs = useRef<Map<string, any>>(new Map());
+  const morphRefs = useRef<MorphItems>(new Map());
 
   const { dispatch } = useTransitionState();
 
@@ -24,7 +27,9 @@ export default function Apple() {
   return (
     <Page ref={pageRef}>
       <Thing
-        ref={(ref) => morphRefs.current.set("morph-blue", ref)}
+        ref={(ref) => {
+          morphRefs.current.set("morph-blue", ref!);
+        }}
         color="blue"
       >
         Applppleles

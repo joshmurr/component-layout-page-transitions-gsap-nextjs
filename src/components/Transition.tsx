@@ -32,7 +32,9 @@ export const Transition = ({ children }: any) => {
   const [exitChild, setExitChild] = useState(children);
   const [enterChild, setEnterChild] = useState(null);
 
-  const counter = useRef(0);
+  /* I don't link counting renders but this component needs to
+   * render twice for this to work. */
+  const renderCounter = useRef(0);
 
   const { state, dispatch } = useTransitionState();
   const { contextSafe } = useGSAP();
@@ -40,7 +42,7 @@ export const Transition = ({ children }: any) => {
 
   const prepareElements = contextSafe(
     (fromItems: MorphItems, toItems: MorphItems) => {
-      if (counter.current == 0) return;
+      if (renderCounter.current == 0) return;
       fromItems.forEach((morphEl, key) => {
         const clone = morphEl.cloneNode(true);
         const pagePosition = getPagePosition(morphEl);
@@ -55,7 +57,7 @@ export const Transition = ({ children }: any) => {
         const targetEl = toItems.get(key);
         if (!targetEl) return;
 
-        const stuff = {
+        const toMorph = {
           key,
           el: clone,
           target: targetEl,
@@ -63,7 +65,7 @@ export const Transition = ({ children }: any) => {
           pagePosition,
         };
 
-        morphClones.current.set(key, stuff);
+        morphClones.current.set(key, toMorph);
 
         if (overlayRef.current) {
           overlayRef.current.appendChild(clone);
@@ -73,6 +75,8 @@ export const Transition = ({ children }: any) => {
   );
 
   const animateElements = contextSafe((callback: () => void) => {
+    /* You can't sequence or time Flip animations so you need to
+     * count them to get a total onComplete callback. */
     let counter = 0;
 
     morphClones.current.forEach(({ el, target }) => {
@@ -107,31 +111,39 @@ export const Transition = ({ children }: any) => {
           overlayRef.current.innerHTML = "";
         }
         dispatch({ type: "unmount", value: { key: exitChild.key } });
-        counter.current = 0;
+        renderCounter.current = 0;
       });
   });
 
   const animate = contextSafe(() => {
+    /* Grab the refs from the store */
     const exit = state.componentStore.get(exitChild.key);
     const entry = state.componentStore.get(children.key);
 
     if (!exit || !entry) return;
 
+    /* Page setup:
+     * - Hide the incoming entry page.
+     * - Clone all the relevant layout (morph) items. */
     gsap.set(entry.page, { autoAlpha: 0 });
     prepareElements(exit.morphItems, entry.morphItems);
 
+    /* Exit animations for whole exit page */
     gsap
       .timeline()
       .to(exit.page, { autoAlpha: 0, duration: 2 })
       .then(() => {
+        /* Do the morphing with a callback */
         animateElements(animateOut);
       });
 
-    counter.current++;
+    renderCounter.current++;
   });
 
   useEffect(() => {
     if (children.key === exitChild.key) return; /* nothing changed */
+    /* Mount new child. It it initially hidden by the current exit child
+     * providing a background color is set. */
     setEnterChild(children);
     animate();
   }, [children, exitChild.key, animate]);
@@ -144,5 +156,3 @@ export const Transition = ({ children }: any) => {
     </>
   );
 };
-
-/* {cloneElement(displayComponent, pageProps)} */

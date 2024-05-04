@@ -1,6 +1,9 @@
 import { Page } from "@/components/Page";
 import { Thing } from "@/components/Thing";
-import { useTransitionState } from "@/context/TransitionContext";
+import {
+  type MorphItems,
+  useTransitionState,
+} from "@/context/TransitionContext";
 import { useLayoutEffect, useRef } from "react";
 import styled from "styled-components";
 
@@ -11,7 +14,7 @@ const BiggerThing = styled(Thing)`
 
 export default function Home() {
   const pageRef = useRef(null);
-  const morphRefs = useRef<Map<string, any>>(new Map());
+  const morphRefs = useRef<MorphItems>(new Map());
 
   const { dispatch } = useTransitionState();
 
@@ -31,13 +34,17 @@ export default function Home() {
     <Page ref={pageRef}>
       <BiggerThing
         color="red"
-        ref={(ref) => morphRefs.current.set("morph-red", ref)}
+        ref={(ref) => {
+          morphRefs.current.set("morph-red", ref!);
+        }}
       >
         Something
       </BiggerThing>
       <Thing color="green">Something</Thing>
       <Thing
-        ref={(ref) => morphRefs.current.set("morph-blue", ref)}
+        ref={(ref) => {
+          morphRefs.current.set("morph-blue", ref!);
+        }}
         color="blue"
       >
         Something
