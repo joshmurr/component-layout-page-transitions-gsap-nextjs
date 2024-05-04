@@ -120,7 +120,10 @@ export const Transition = ({ children }: any) => {
     const exit = state.componentStore.get(exitChild.key);
     const entry = state.componentStore.get(children.key);
 
-    if (!exit || !entry) return;
+    if (!exit || !entry) {
+      renderCounter.current++;
+      return;
+    }
 
     /* Page setup:
      * - Hide the incoming entry page.
@@ -136,7 +139,6 @@ export const Transition = ({ children }: any) => {
         /* Do the morphing with a callback */
         animateElements(animateOut);
       });
-
     renderCounter.current++;
   });
 

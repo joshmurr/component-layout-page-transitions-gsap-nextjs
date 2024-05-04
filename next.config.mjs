@@ -5,6 +5,15 @@ const nextConfig = {
     styledComponents: true,
   },
   transpilePackages: ["gsap"],
+  /* compress: false,
+  webpack(webpackConfig) {
+    return {
+      ...webpackConfig,
+      optimization: {
+        minimize: false,
+      },
+    };
+  }, */
 };
 
 export default nextConfig;
