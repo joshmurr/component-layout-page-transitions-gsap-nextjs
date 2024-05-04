@@ -35,7 +35,12 @@ export default function Apple() {
         Applppleles
       </Thing>
       <Thing color="yellow">Something</Thing>
-      <Thing color="red" ref={(ref) => morphRefs.current.set("morph-red", ref)}>
+      <Thing
+        color="red"
+        ref={(ref) => {
+          morphRefs.current.set("morph-red", ref!);
+        }}
+      >
         Something
       </Thing>
     </Page>
