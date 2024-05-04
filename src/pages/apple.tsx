@@ -2,14 +2,8 @@ import { Page } from "@/components/Page";
 import { Thing } from "@/components/Thing";
 import { useTransitionState } from "@/context/TransitionContext";
 import { useLayoutEffect, useRef } from "react";
-import styled from "styled-components";
 
-const BiggerThing = styled(Thing)`
-  width: 600px;
-  height: 500px;
-`;
-
-export default function Home() {
+export default function Apple() {
   const pageRef = useRef(null);
   const morphRefs = useRef<Map<string, any>>(new Map());
 
@@ -20,7 +14,7 @@ export default function Home() {
     dispatch({
       type: "mount",
       value: {
-        key: "/",
+        key: "/apple",
         page: pageRef.current,
         morphItems: morphRefs.current,
       },
@@ -29,17 +23,14 @@ export default function Home() {
 
   return (
     <Page ref={pageRef}>
-      <BiggerThing
-        color="red"
-        ref={(ref) => morphRefs.current.set("morph-red", ref)}
-      >
-        Something
-      </BiggerThing>
-      <Thing color="green">Something</Thing>
       <Thing
         ref={(ref) => morphRefs.current.set("morph-blue", ref)}
         color="blue"
       >
+        Applppleles
+      </Thing>
+      <Thing color="yellow">Something</Thing>
+      <Thing color="red" ref={(ref) => morphRefs.current.set("morph-red", ref)}>
         Something
       </Thing>
     </Page>
