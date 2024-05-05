@@ -85,10 +85,10 @@ export const Transition = ({ children }: any) => {
       return;
     }
 
-    morphClones.current.forEach(({ el, target }) => {
+    morphClones.current.forEach(({ el, target, scale }) => {
       Flip.fit(el, target, {
         absolute: true,
-        scale: true,
+        scale,
         duration: 1,
         ease: "power2.inOut",
         onComplete: () => {

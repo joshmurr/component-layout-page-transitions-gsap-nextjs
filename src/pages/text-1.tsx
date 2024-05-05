@@ -1,4 +1,5 @@
 import { Page } from "@/components/Page";
+import { Paragraph } from "@/components/Paragraph";
 import { Word } from "@/components/Word";
 import {
   useComponentStore,
@@ -22,7 +23,7 @@ export default function Text_1() {
 
   return (
     <Page ref={pageRef}>
-      <p>
+      <Paragraph>
         {words.map(({ word, hash }) => {
           const key = `morph-${hash}`;
           return (
@@ -33,7 +34,7 @@ export default function Text_1() {
             />
           );
         })}
-      </p>
+      </Paragraph>
     </Page>
   );
 }
