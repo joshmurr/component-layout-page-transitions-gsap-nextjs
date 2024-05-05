@@ -10,7 +10,14 @@ import gsap from "gsap";
 
 type Path = `/${string}`;
 export type MorphItems = Map<string, HTMLElement>;
-type ComponentStore = Map<Path, { page: HTMLElement; morphItems: MorphItems }>;
+type Animations = {
+  exit: gsap.TweenVars;
+  enter: gsap.TweenVars;
+};
+type ComponentStore = Map<
+  Path,
+  { page: HTMLElement; morphItems: MorphItems; animations: Animations }
+>;
 
 type TransitionContextState = {
   componentStore: ComponentStore;
@@ -24,11 +31,16 @@ type TransitionContextAction =
         key: Path;
         page: HTMLElement;
         morphItems: MorphItems;
+        animations: Animations;
       };
     }
   | {
       type: "unmount";
       value: { key: Path };
+    }
+  | {
+      type: "setAnimation";
+      value: { key: Path; animations: Partial<Animations> };
     };
 
 const initialState: TransitionContextState = {
@@ -48,7 +60,12 @@ const TransitionContext = createContext<TransitionContextValue>({
 
 const handleMount = (
   componentStore: ComponentStore,
-  value: { key: Path; page: HTMLElement; morphItems: MorphItems },
+  value: {
+    key: Path;
+    page: HTMLElement;
+    morphItems: MorphItems;
+    animations: Animations;
+  },
 ) => {
   componentStore.set(value.key, value);
 
@@ -102,7 +119,10 @@ const useTransitionState = () => {
   return useContext(TransitionContext);
 };
 
-const useComponentStore = (pageKey: Path) => {
+const useComponentStore = (
+  pageKey: Path,
+  opts?: { animations?: Partial<Animations> },
+) => {
   const pageRef = useRef(null);
   const morphRefs = useRef<MorphItems>(new Map());
 
@@ -116,8 +136,20 @@ const useComponentStore = (pageKey: Path) => {
         key: pageKey,
         page: pageRef.current,
         morphItems: morphRefs.current,
+        animations: {
+          exit: {
+            autoAlpha: 0,
+            duration: 1,
+          },
+          enter: {
+            autoAlpha: 1,
+            duration: 1,
+          },
+          ...opts?.animations,
+        },
       },
     });
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [dispatch, pageKey]);
 
   return [pageRef, morphRefs] as const;

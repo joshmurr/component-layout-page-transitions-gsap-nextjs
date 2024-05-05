@@ -21,6 +21,8 @@ export default function App({ Component, pageProps, router }: AppProps) {
         <Link href="/">Home</Link>
         <Link href="/apple">Apple</Link>
         <Link href="/orange">Orange</Link>
+        <Link href="/text-1">Text_1</Link>
+        <Link href="/text-2">Text_2</Link>
       </Nav>
       <Transition>
         <Component key={router.asPath} {...pageProps} />

@@ -44,6 +44,10 @@ export const Transition = ({ children }: any) => {
     (fromItems: MorphItems, toItems: MorphItems) => {
       if (renderCounter.current == 0) return;
       fromItems.forEach((morphEl, key) => {
+        const targetEl = toItems.get(key);
+        /* No matching morphEl so ignore */
+        if (!targetEl) return;
+
         const clone = morphEl.cloneNode(true);
         const pagePosition = getPagePosition(morphEl);
 
@@ -54,14 +58,11 @@ export const Transition = ({ children }: any) => {
           ...pagePosition,
         });
 
-        const targetEl = toItems.get(key);
-        if (!targetEl) return;
-
         const toMorph = {
           key,
           el: clone,
           target: targetEl,
-          scale: true,
+          scale: clone.nodeName === "DIV",
           pagePosition,
         };
 
@@ -78,6 +79,11 @@ export const Transition = ({ children }: any) => {
     /* You can't sequence or time Flip animations so you need to
      * count them to get a total onComplete callback. */
     let counter = 0;
+
+    if (!morphClones.current.size) {
+      callback();
+      return;
+    }
 
     morphClones.current.forEach(({ el, target }) => {
       Flip.fit(el, target, {
@@ -103,7 +109,7 @@ export const Transition = ({ children }: any) => {
 
     gsap
       .timeline()
-      .to(entry.page, { autoAlpha: 1, duration: 1 })
+      .to(entry.page, entry.animations.enter)
       .then(() => {
         setExitChild(children);
         setEnterChild(null);
@@ -128,13 +134,14 @@ export const Transition = ({ children }: any) => {
     /* Page setup:
      * - Hide the incoming entry page.
      * - Clone all the relevant layout (morph) items. */
+
     gsap.set(entry.page, { autoAlpha: 0 });
     prepareElements(exit.morphItems, entry.morphItems);
 
     /* Exit animations for whole exit page */
     gsap
       .timeline()
-      .to(exit.page, { autoAlpha: 0, duration: 2 })
+      .to(exit.page, exit.animations.exit)
       .then(() => {
         /* Do the morphing with a callback */
         animateElements(animateOut);

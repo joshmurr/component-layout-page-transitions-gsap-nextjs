@@ -6,7 +6,14 @@ import {
 } from "@/context/TransitionContext";
 
 export default function Apple() {
-  const [pageRef, morphRefs] = useComponentStore("/apple");
+  const [pageRef, morphRefs] = useComponentStore("/apple", {
+    animations: {
+      exit: {
+        autoAlpha: 0,
+        duration: 0.3,
+      },
+    },
+  });
 
   return (
     <Page ref={pageRef}>
