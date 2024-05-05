@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useReducer } from "react";
+import React, {
+  RefObject,
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
 import gsap from "gsap";
 
 type Path = `/${string}`;
@@ -95,4 +102,39 @@ const useTransitionState = () => {
   return useContext(TransitionContext);
 };
 
-export { TransitionContext, TransitionProvider, useTransitionState };
+const useComponentStore = (pageKey: Path) => {
+  const pageRef = useRef(null);
+  const morphRefs = useRef<MorphItems>(new Map());
+
+  const { dispatch } = useTransitionState();
+
+  useEffect(() => {
+    if (!pageRef.current || !morphRefs.current) return;
+    dispatch({
+      type: "mount",
+      value: {
+        key: pageKey,
+        page: pageRef.current,
+        morphItems: morphRefs.current,
+      },
+    });
+  }, [dispatch, pageKey]);
+
+  return [pageRef, morphRefs] as const;
+};
+
+const registerMorphItem = (key: string, morphRefs: RefObject<MorphItems>) => {
+  return (node: HTMLElement | null) => {
+    if (node && morphRefs && morphRefs.current) {
+      morphRefs.current.set(key, node);
+    }
+  };
+};
+
+export {
+  TransitionContext,
+  TransitionProvider,
+  useTransitionState,
+  useComponentStore,
+  registerMorphItem,
+};

@@ -1,46 +1,20 @@
 import { Page } from "@/components/Page";
 import { Thing } from "@/components/Thing";
 import {
-  type MorphItems,
-  useTransitionState,
+  useComponentStore,
+  registerMorphItem,
 } from "@/context/TransitionContext";
-import { useLayoutEffect, useRef } from "react";
 
 export default function Apple() {
-  const pageRef = useRef(null);
-  const morphRefs = useRef<MorphItems>(new Map());
-
-  const { dispatch } = useTransitionState();
-
-  useLayoutEffect(() => {
-    if (!pageRef.current || !morphRefs.current) return;
-    dispatch({
-      type: "mount",
-      value: {
-        key: "/apple",
-        page: pageRef.current,
-        morphItems: morphRefs.current,
-      },
-    });
-  }, [dispatch]);
+  const [pageRef, morphRefs] = useComponentStore("/apple");
 
   return (
     <Page ref={pageRef}>
-      <Thing
-        ref={(ref) => {
-          morphRefs.current.set("morph-blue", ref!);
-        }}
-        color="blue"
-      >
+      <Thing color="blue" ref={registerMorphItem("morph-blue", morphRefs)}>
         Applppleles
       </Thing>
       <Thing color="yellow">Something</Thing>
-      <Thing
-        color="red"
-        ref={(ref) => {
-          morphRefs.current.set("morph-red", ref!);
-        }}
-      >
+      <Thing color="red" ref={registerMorphItem("morph-red", morphRefs)}>
         Something
       </Thing>
     </Page>
