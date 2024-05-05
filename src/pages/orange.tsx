@@ -4,7 +4,7 @@ import {
   type MorphItems,
   useTransitionState,
 } from "@/context/TransitionContext";
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export default function Orange() {
   const pageRef = useRef(null);
@@ -12,7 +12,7 @@ export default function Orange() {
 
   const { dispatch } = useTransitionState();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!pageRef.current || !morphRefs.current) return;
     dispatch({
       type: "mount",

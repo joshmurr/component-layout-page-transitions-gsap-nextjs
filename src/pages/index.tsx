@@ -4,7 +4,7 @@ import {
   type MorphItems,
   useTransitionState,
 } from "@/context/TransitionContext";
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 const BiggerThing = styled(Thing)`
@@ -18,7 +18,7 @@ export default function Home() {
 
   const { dispatch } = useTransitionState();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!pageRef.current || !morphRefs.current) return;
     dispatch({
       type: "mount",
