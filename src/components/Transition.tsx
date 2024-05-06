@@ -32,17 +32,12 @@ export const Transition = ({ children }: any) => {
   const [exitChild, setExitChild] = useState(children);
   const [enterChild, setEnterChild] = useState(null);
 
-  /* I don't link counting renders but this component needs to
-   * render twice for this to work. */
-  const renderCounter = useRef(0);
-
   const { state, dispatch } = useTransitionState();
   const { contextSafe } = useGSAP();
   const morphClones = useRef<Map<string, any>>(new Map());
 
   const prepareElements = contextSafe(
     (fromItems: MorphItems, toItems: MorphItems) => {
-      if (renderCounter.current == 0) return;
       fromItems.forEach((morphEl, key) => {
         const targetEl = toItems.get(key);
         /* No matching morphEl so ignore */
@@ -78,7 +73,7 @@ export const Transition = ({ children }: any) => {
   const animateElements = contextSafe((callback: () => void) => {
     /* You can't sequence or time Flip animations so you need to
      * count them to get a total onComplete callback. */
-    let counter = 0;
+    let itemCounter = 0;
 
     if (!morphClones.current.size) {
       callback();
@@ -93,7 +88,7 @@ export const Transition = ({ children }: any) => {
         ease: "power3.inOut",
         onComplete: () => {
           callback();
-          if (++counter === morphClones.current.size) {
+          if (++itemCounter === morphClones.current.size) {
             morphClones.current.clear();
             callback();
           }
@@ -117,7 +112,6 @@ export const Transition = ({ children }: any) => {
           overlayRef.current.innerHTML = "";
         }
         dispatch({ type: "unmount", value: { key: exitChild.key } });
-        renderCounter.current = 0;
       });
   });
 
@@ -127,7 +121,6 @@ export const Transition = ({ children }: any) => {
     const entry = state.componentStore.get(children.key);
 
     if (!exit || !entry) {
-      renderCounter.current++;
       return;
     }
 
@@ -146,7 +139,6 @@ export const Transition = ({ children }: any) => {
         /* Do the morphing with a callback */
         animateElements(animateOut);
       });
-    renderCounter.current++;
   });
 
   useEffect(() => {
