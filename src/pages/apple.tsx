@@ -5,15 +5,17 @@ import {
   registerMorphItem,
 } from "@/context/TransitionContext";
 
-export default function Apple() {
-  const [pageRef, morphRefs] = useComponentStore("/apple", {
-    animations: {
-      exit: {
-        autoAlpha: 0,
-        duration: 0.3,
-      },
+const animations = {
+  animations: {
+    exit: {
+      autoAlpha: 0,
+      duration: 0.3,
     },
-  });
+  },
+};
+
+export default function Apple() {
+  const [pageRef, morphRefs] = useComponentStore("/apple", animations);
 
   return (
     <Page ref={pageRef}>

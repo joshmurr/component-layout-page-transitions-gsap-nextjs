@@ -90,7 +90,7 @@ export const Transition = ({ children }: any) => {
         absolute: true,
         scale,
         duration: 1,
-        ease: "power2.inOut",
+        ease: "power3.inOut",
         onComplete: () => {
           callback();
           if (++counter === morphClones.current.size) {

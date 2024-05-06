@@ -7,19 +7,21 @@ import {
 } from "@/context/TransitionContext";
 import { shuffled } from "@/data/text";
 
-export default function Text_2() {
-  const [pageRef, morphRefs] = useComponentStore("/text-2", {
-    animations: {
-      enter: {
-        autoAlpha: 1,
-        duration: 0,
-      },
-      exit: {
-        autoAlpha: 0,
-        duration: 0,
-      },
+const animations = {
+  animations: {
+    enter: {
+      autoAlpha: 1,
+      duration: 0,
     },
-  });
+    exit: {
+      autoAlpha: 0,
+      duration: 0,
+    },
+  },
+};
+
+export default function Text_2() {
+  const [pageRef, morphRefs] = useComponentStore("/text-2", animations);
 
   return (
     <Page ref={pageRef}>

@@ -149,8 +149,7 @@ const useComponentStore = (
         },
       },
     });
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, [dispatch, pageKey]);
+  }, [dispatch, pageKey, opts]);
 
   return [pageRef, morphRefs] as const;
 };
